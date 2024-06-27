@@ -1,12 +1,14 @@
 package com.saran.QuizApp.Services;
 
 import com.saran.QuizApp.Mapper.QuestionMapper;
+import com.saran.QuizApp.Mapper.QuizMapper;
 import com.saran.QuizApp.Models.Question;
 import com.saran.QuizApp.Models.Quiz;
 import com.saran.QuizApp.Models.ScoreResponse;
 import com.saran.QuizApp.Repository.QuestionRepository;
 import com.saran.QuizApp.Repository.QuizRepository;
 import com.saran.QuizApp.Responses.QuestionResponse;
+import com.saran.QuizApp.Responses.QuizResponse;
 import jakarta.persistence.Entity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,12 @@ public class QuizService {
     private  final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
-
-    public QuizService(QuizRepository quizRepository, QuestionRepository questionRepository, QuestionMapper questionMapper) {
+    private final QuizMapper quizMapper;
+    public QuizService(QuizRepository quizRepository, QuestionRepository questionRepository, QuestionMapper questionMapper, QuizMapper quizMapper) {
         this.quizRepository = quizRepository;
         this.questionRepository = questionRepository;
         this.questionMapper = questionMapper;
+        this.quizMapper = quizMapper;
     }
     public ResponseEntity<String> CreateQuiz(String category, String quizname, int numQ) {
 
@@ -39,7 +42,7 @@ public class QuizService {
     }
 
     public ResponseEntity<List<QuestionResponse>> getQuizbyId(Long id) {
-        Optional<Quiz> quiz =quizRepository.findById(id);//optional becoz findbyid if present stores or else null will be stored so it is optional
+        Optional<Quiz> quiz =quizRepository.findById(id);//optional(findbyid) becoz findbyid if present stores or else null will be stored so it is optional
         List<Question> questions = quiz.get().getQuestions();
         List<QuestionResponse> questionResponses = questions.stream().map(questionMapper::toQuestionResponse).toList();
         return new ResponseEntity<>(questionResponses,HttpStatus.OK);
@@ -57,5 +60,10 @@ public class QuizService {
             i++;
         }
         return new ResponseEntity<>(score,HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<QuizResponse>> getAvailableQuiz() {
+        List<QuizResponse> quizResponses = quizRepository.findAll().stream().map(quizMapper::toQuizResponse).toList();
+        return new ResponseEntity<>(quizResponses,HttpStatus.OK);
     }
 }

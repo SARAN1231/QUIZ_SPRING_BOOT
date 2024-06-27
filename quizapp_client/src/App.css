@@ -1,0 +1,7 @@
+.App {
+  text-align: center;
+}
+.list-group-item:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}

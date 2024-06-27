@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 @RequestMapping("question")
 public class QuestionController {
 
-   private QuestionService questionService;
+   private final QuestionService questionService;
 
     public QuestionController(QuestionService questionService) {
         this.questionService = questionService;
@@ -22,10 +23,12 @@ public class QuestionController {
     public ResponseEntity<List<Question>> getallquestions() {
         return questionService.getAllQuestions();
     }
+
     @GetMapping("category/{category}")
     public ResponseEntity< List<QuestionResponse>> getallquestionsbycategory(@PathVariable String category) {
         return questionService.getAllQuestionsbycategory(category);
     }
+
     @PostMapping("postquestion")
     public ResponseEntity< Question> postquestion(@RequestBody Question question) {
         return questionService.postQuestion(question);
