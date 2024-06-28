@@ -1,93 +1,76 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const CreateQuiz = () => {
-    const [Quiz,setQuiz] = useState([]);
-
-    useEffect(()=> {
-        loadQuizs()
-    },[]
-    )
-    const loadQuizs = async() => {
-        const response = await axios.get(
-          "http://localhost:8080/quiz/availablequiz"
-        );
-        console.log(response)
-        setQuiz(response.data)
-
+    const navigate = useNavigate();
+    const [createquiz, setcreatequiz] = useState({
+      numQ: "",
+      quizName: "",
+      category: "",
+    });
+    const {numQ,quizName,category} = createquiz;
+    const handleInputChange = (e) => {
+        setcreatequiz({...createquiz,[e.target.name]:e.target.value})
+    }
+    const handlesubmit = async(e) => {
+        e.preventDefault();
+        const params = {
+            numQ,
+            quizName,
+            category
+        }
+       await axios.post(`http://localhost:8080/quiz/create`,null,{params});
+        navigate("/")
     }
   return (
     <div className="container">
-      <div className="d-flex justify-content-between align-items-center ">
-        <h1 className="text-center mt-4">Available Quizes</h1>
-
-        {/* <div>
-          <Link to="/admin/addquestion" className="btn btn-primary">
-            Add Question
-          </Link>
-
-          <div class="btn-group mx-2">
-            <button
-              type="button"
-              className="btn btn-danger dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              category
-            </button>
-            <ul class="dropdown-menu">
-              <li
-                className="dropdown-item"
-                onClick={() => handlecategory("java")}
-              >
-                java
-              </li>
-              <li
-                className="dropdown-item"
-                onClick={() => handlecategory("python")}
-              >
-                python
-              </li>
-              <li className="dropdown-item" onClick={() => loadQuestions()}>
-                All
-              </li>
-            </ul>
+      <h1 className="text-center mt-4">Create Quiz</h1>
+      <div className="col-md-6 offset-md-3 border rounded p-4 mt-4 shadow">
+        <form
+          onSubmit={(e) => {
+            handlesubmit(e);
+          }}
+        >
+          <div class="col mb-4">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="No of Question (should be less than 10)"
+              aria-label="No of Question"
+              name="numQ"
+              value={numQ}
+              onChange={(e) => handleInputChange(e)}
+            />
           </div>
-        </div> */}
-      </div>
+          <div class="col mb-4">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Quiz Title"
+              aria-label="No of Question"
+              name="quizName"
+              value={quizName}
+              onChange={(e) => handleInputChange(e)}
+            />
+          </div>
 
-      <table className="table table-hover  mt-4">
-        <thead>
-          <tr className="table-primary">
-            <th scope="col">#</th>
-            <th scope="col">Title</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Quiz.map((quiz, index) => (
-            <tr>
-              <th scope="row">{index + 1}</th>
-              <td>{quiz.quizName}</td>
-              <td>
-                <Link to={`playquiz/${quiz.id}`}
-               
-                  className="btn btn-warning btn-sm mx-1"
-                >
-                  <i className="fas fa-edit"></i>
-                </Link>
-                {/* <button
-                  onClick={() => handleDelete(question.id)}
-                  className="btn btn-danger btn-sm mx-1"
-                >
-                  <i className="fas fa-trash"></i>
-                </button> */}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          <select
+            class="form-select"
+            name="category"
+            value={category}
+            onChange={handleInputChange}
+            aria-label="Default select example"
+          >
+            <option selected>Select Category</option>
+            <option value="java">java</option>
+            <option value="python">python</option>
+          </select>
+          <button type="submit" className="btn btn-primary mt-4">
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

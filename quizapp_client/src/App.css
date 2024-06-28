@@ -1,7 +1,11 @@
-.App {
-  text-align: center;
+*{
+  margin: 0;
 }
-.list-group-item:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
+
+body {
+  height: 100vh;
+  background-image: linear-gradient(#D8C7FF , #19006C);
 }
+
+
+
